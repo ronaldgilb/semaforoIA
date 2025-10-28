@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Semáforo Automático</title>
+  <style>
+    .semaforo {
+      width: 120px;
+      background: #222;
+      padding: 18px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 -6px 12px rgba(0,0,0,0.4);
+      margin: 40px auto;
+    }
+    .luz {
+      width: 72px;
+      height: 72px;
+      margin: 12px auto;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.6));
+      transition: background 250ms, box-shadow 250ms;
+    }
+    .luz.encendida.rojo {
+      background: #ff2e2e;
+      box-shadow: 0 0 26px #ff2e2e;
+    }
+    .luz.encendida.amarillo {
+      background: #ffd92e;
+      box-shadow: 0 0 26px #ffd92e;
+    }
+    .luz.encendida.verde {
+      background: #2eff6b;
+      box-shadow: 0 0 26px #2eff6b;
+    }
+    .estado {
+      text-align: center;
+      margin-top: 10px;
+      font-family: sans-serif;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="semaforo">
+      <div id="luzRojo" class="luz rojo"></div>
+      <div id="luzAmarillo" class="luz amarillo"></div>
+      <div id="luzVerde" class="luz verde"></div>
+    </div>
+    <div id="estadoTexto" class="estado">Semáforo automático</div>
+  </main>
+
+  <script>
+    const luzRojo = document.getElementById('luzRojo');
+    const luzAmarillo = document.getElementById('luzAmarillo');
+    const luzVerde = document.getElementById('luzVerde');
+    const estadoTexto = document.getElementById('estadoTexto');
+
+    const ESTADOS = ['ROJO', 'ROJO_AMARILLO', 'VERDE', 'AMARILLO'];
+    const DURACIONES = { ROJO: 3000, ROJO_AMARILLO: 1000, VERDE: 4000, AMARILLO: 1500 };
+    let indice = 0;
+
+    function apagarTodas() {
+      luzRojo.classList.remove('encendida');
+      luzAmarillo.classList.remove('encendida');
+      luzVerde.classList.remove('encendida');
+    }
+
+    function mostrarEstado(nombre) {
+      apagarTodas();
+      if (nombre === 'ROJO') {
+        luzRojo.classList.add('encendida');
+        estadoTexto.textContent = 'ROJO — Detener';
+      } else if (nombre === 'ROJO_AMARILLO') {
+        luzRojo.classList.add('encendida');
+        luzAmarillo.classList.add('encendida');
+        estadoTexto.textContent = 'ROJO + AMARILLO — Prepararse';
+      } else if (nombre === 'VERDE') {
+        luzVerde.classList.add('encendida');
+        estadoTexto.textContent = 'VERDE — Avanzar';
+      } else if (nombre === 'AMARILLO') {
+        luzAmarillo.classList.add('encendida');
+        estadoTexto.textContent = 'AMARILLO — Precaución';
+      }
+    }
+
+    function cicloSemaforo() {
+      const estado = ESTADOS[indice];
+      mostrarEstado(estado);
+      const tiempo = DURACIONES[estado] || 2000;
+      indice = (indice + 1) % ESTADOS.length;
+      setTimeout(cicloSemaforo, tiempo);
+    }
+
+    cicloSemaforo();
+  </script>
+</body>
+</html>
